@@ -26,8 +26,9 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset("assets/images/logo_kongcuts_fix.png"),
-            SizedBox(height: 20),
+            // Image.asset("assets/images/logo_kongcuts_fix.png"),
+            // SizedBox(height: 20),
+
             //form login
             TextFormField(
               controller: _emailController,
@@ -135,30 +136,30 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
             SizedBox(height: 20),
-            Center(
-              child: TextButton(
-                onPressed: () {
-                  // context.pushNamed(RegisterPage.id);
-                },
-                child: RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: "Don't have an account? ",
-                        style: TextStyle(color: AppColors.black),
-                      ),
-                      TextSpan(
-                        text: "Register here",
-                        style: TextStyle(
-                          color: AppColors.darkRed,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            // Center(
+            //   child: TextButton(
+            //     onPressed: () {
+            //       context.push(RegisPage());
+            //     },
+            //     child: RichText(
+            //       text: TextSpan(
+            //         children: [
+            //           TextSpan(
+            //             text: "Don't have an account? ",
+            //             style: TextStyle(color: AppColors.black),
+            //           ),
+            //           TextSpan(
+            //             text: "Register here",
+            //             style: TextStyle(
+            //               color: AppColors.darkRed,
+            //               fontWeight: FontWeight.bold,
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

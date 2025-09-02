@@ -1,6 +1,6 @@
 import 'package:barber/extensions/extensions.dart';
 import 'package:barber/utils/utils.dart';
-import 'package:barber/views/login_page.dart';
+import 'package:barber/widget/auth_page.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -74,10 +74,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         style: TextStyle(fontSize: 16),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: 30),
+                      SizedBox(height: 8),
                       Image.asset(
                         "assets/images/kartu_landing_fix.png",
-                        height: 260,
+                        height: 280,
                       ),
                     ],
                   ),
@@ -88,7 +88,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   color: AppColors.offWhite,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       Text(
                         "Professional Barber",
                         style: TextStyle(
@@ -182,6 +182,23 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     ),
                   ),
                 ),
+                // IconButton(
+                //   onPressed: currentPage == 0
+                //       ? null
+                //       : () {
+                //           _controller.previousPage(
+                //             duration: Duration(milliseconds: 500),
+                //             curve: Curves.easeInOut,
+                //           );
+                //         },
+                //   icon: Icon(
+                //     Icons.arrow_left,
+                //     size: 28,
+                //     color: currentPage == 0
+                //         ? AppColors.grey
+                //         : AppColors.darkRed,
+                //   ),
+                // ),
 
                 /// INDICATOR
                 SmoothPageIndicator(
@@ -190,7 +207,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   effect: WormEffect(
                     dotHeight: 8,
                     dotWidth: 8,
-                    activeDotColor: AppColors.black,
+                    activeDotColor: AppColors.darkRed,
                   ),
                 ),
 
@@ -198,7 +215,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 TextButton(
                   onPressed: () {
                     if (onLastPage) {
-                      context.push(LoginPage());
+                      context.push(AuthPage());
                     } else {
                       _controller.nextPage(
                         duration: const Duration(milliseconds: 500),

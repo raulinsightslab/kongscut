@@ -1,4 +1,3 @@
-import 'package:barber/extensions/extensions.dart';
 import 'package:barber/utils/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -28,8 +27,8 @@ class _RegisPageState extends State<RegisPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset("assets/images/logo_kongcuts_fix.png"),
-            SizedBox(height: 20),
+            // Image.asset("assets/images/logo_kongcuts_fix.png"),
+            // SizedBox(height: 20),
             //form login
             TextFormField(
               controller: _nameController,
@@ -44,6 +43,7 @@ class _RegisPageState extends State<RegisPage> {
                 ),
               ),
             ),
+            SizedBox(height: 20),
             TextFormField(
               controller: _emailController,
               decoration: InputDecoration(
@@ -125,45 +125,38 @@ class _RegisPageState extends State<RegisPage> {
                   // }
                 },
                 child: Text(
-                  "Login",
+                  "Register",
                   style: TextStyle(fontSize: 18, color: AppColors.white),
                 ),
               ),
             ),
             SizedBox(height: 20),
-            Center(
-              child: Text(
-                "Or continue with",
-                style: TextStyle(color: AppColors.black),
-              ),
-            ),
-            SizedBox(height: 15),
 
             // Social Buttonsadb kill-server
-            Center(
-              child: TextButton(
-                onPressed: () {
-                  context.push(RegisPage());
-                },
-                child: RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: "Don't have an account? ",
-                        style: TextStyle(color: AppColors.black),
-                      ),
-                      TextSpan(
-                        text: "Register here",
-                        style: TextStyle(
-                          color: AppColors.darkRed,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            // Center(
+            //   child: TextButton(
+            //     onPressed: () {
+            //       context.push(LoginPage());
+            //     },
+            //     child: RichText(
+            //       text: TextSpan(
+            //         children: [
+            //           TextSpan(
+            //             text: "Already have an account? ",
+            //             style: TextStyle(color: AppColors.black),
+            //           ),
+            //           TextSpan(
+            //             text: "Login here",
+            //             style: TextStyle(
+            //               color: AppColors.darkRed,
+            //               fontWeight: FontWeight.bold,
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
