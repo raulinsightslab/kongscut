@@ -5,23 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 void main() {
-  runApp(const KongCutsApp());
-}
-
-class KongCutsApp extends StatelessWidget {
-  const KongCutsApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: const OnboardingPage(),
-    );
-  }
+  runApp(const OnboardingPage());
 }
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
+  static const id = "/onboarding";
 
   @override
   State<OnboardingPage> createState() => _OnboardingPageState();

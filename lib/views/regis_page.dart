@@ -1,3 +1,6 @@
+import 'package:barber/model/regis_model.dart';
+import 'package:barber/services/api/register.dart';
+import 'package:barber/services/local/shared_preferences.dart';
 import 'package:barber/utils/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -7,6 +10,7 @@ void main() {
 
 class RegisPage extends StatefulWidget {
   const RegisPage({super.key});
+  static const id = "/regis_page";
 
   @override
   State<RegisPage> createState() => _RegisPageState();
@@ -15,8 +19,69 @@ class RegisPage extends StatefulWidget {
 class _RegisPageState extends State<RegisPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordcontroller = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   bool obsurePassword = true;
+  RegisUserModel? user;
+  String? errorMessage;
+  bool isVisibility = false;
+  bool isLoading = false;
+
+  void registUser() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    if (name.isEmpty || email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Name, Email, and Password cannot be empty"),
+        ),
+      );
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      final results = await AuthenticationAPI.registerUser(
+        email: email,
+        password: password,
+        name: name,
+      );
+
+      setState(() {
+        user = results;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Registration was successful")),
+      );
+
+      PreferenceHandler.saveToken(user?.data.token.toString() ?? "");
+      // context.pop(LoginPage());
+
+      print(user?.toJson());
+    } catch (e) {
+      print(e);
+      setState(() {
+        errorMessage = e.toString();
+      });
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(errorMessage.toString())));
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +124,7 @@ class _RegisPageState extends State<RegisPage> {
             ),
             SizedBox(height: 20),
             TextFormField(
-              controller: _passwordcontroller,
+              controller: passwordController,
               obscureText: obsurePassword,
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.lock_rounded),
@@ -94,35 +159,8 @@ class _RegisPageState extends State<RegisPage> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                onPressed: () async {
-                  String email = _emailController.text.trim();
-                  String password = _passwordcontroller.text.trim();
-
-                  if (email.isEmpty || password.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Email dan Password harus diisi")),
-                    );
-                    return;
-                  }
-
-                  // final dbHelper = DbHelper();
-                  // final user = await DbHelper.loginUser(email, password);
-
-                  // if (user != null) {
-                  //   // Login berhasil
-                  //   ScaffoldMessenger.of(context).showSnackBar(
-                  //     SnackBar(
-                  //       content: Text(
-                  //         "Login berhasil, selamat datang ${user.nama}!",
-                  //       ),
-                  //     ),
-                  //   );
-                  //   context.pushNamed(Botbar.id);
-                  // } else {
-                  //   ScaffoldMessenger.of(context).showSnackBar(
-                  //     SnackBar(content: Text("Email atau Password salah")),
-                  //   );
-                  // }
+                onPressed: () {
+                  isLoading ? null : registUser();
                 },
                 child: Text(
                   "Register",

@@ -1,4 +1,9 @@
+import 'package:barber/extensions/extensions.dart';
+import 'package:barber/model/regis_model.dart';
+import 'package:barber/services/api/register.dart';
+import 'package:barber/services/local/shared_preferences.dart';
 import 'package:barber/utils/utils.dart';
+import 'package:barber/views/dashboard.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -7,6 +12,7 @@ void main() {
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+  static const id = "/login_page";
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -14,8 +20,53 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordcontroller = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool obsurePassword = true;
+  bool isLoading = false;
+  RegisUserModel? user;
+  String? errorMessage;
+
+  void loginUser() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Email and Password cannot be empty")),
+      );
+      isLoading = false;
+      return;
+    }
+    try {
+      final results = await AuthenticationAPI.loginUser(
+        email: email,
+        password: password,
+      );
+      setState(() {
+        user = results;
+      });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Login successful")));
+      PreferenceHandler.saveToken(user?.data.token.toString() ?? "");
+      context.pushReplacement(DashboardPage());
+      print(user?.toJson());
+    } catch (e) {
+      print(e);
+      setState(() {
+        errorMessage = e.toString();
+      });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(errorMessage.toString())));
+    } finally {
+      setState(() {});
+      isLoading = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(height: 20),
             TextFormField(
-              controller: _passwordcontroller,
+              controller: _passwordController,
               obscureText: obsurePassword,
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.lock_rounded),
@@ -80,16 +131,17 @@ class _LoginPageState extends State<LoginPage> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                onPressed: () async {
-                  String email = _emailController.text.trim();
-                  String password = _passwordcontroller.text.trim();
+                onPressed: () {
+                  loginUser();
+                  // String email = _emailController.text.trim();
+                  // String password = _passwordController.text.trim();
 
-                  if (email.isEmpty || password.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Email dan Password harus diisi")),
-                    );
-                    return;
-                  }
+                  // if (email.isEmpty || password.isEmpty) {
+                  //   ScaffoldMessenger.of(context).showSnackBar(
+                  //     SnackBar(content: Text("Email dan Password harus diisi")),
+                  //   );
+                  //   return;
+                  // }
 
                   // final dbHelper = DbHelper();
                   // final user = await DbHelper.loginUser(email, password);

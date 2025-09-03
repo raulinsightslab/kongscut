@@ -1,7 +1,8 @@
 import 'dart:convert';
 
-import 'package:barber/api/endpoint/endpoint.dart';
 import 'package:barber/model/regis_model.dart';
+import 'package:barber/services/api/endpoint/endpoint.dart';
+import 'package:barber/services/local/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class AuthenticationAPI {
@@ -35,7 +36,10 @@ class AuthenticationAPI {
       headers: {"Accept": "application/json"},
     );
     if (response.statusCode == 200) {
-      return RegisUserModel.fromJson(json.decode(response.body));
+      final data = RegisUserModel.fromJson(json.decode(response.body));
+      await PreferenceHandler.saveToken(data.data.token);
+      await PreferenceHandler.saveLogin();
+      return data;
     } else {
       final error = json.decode(response.body);
       throw Exception(error["message"] ?? "Register gagal");
