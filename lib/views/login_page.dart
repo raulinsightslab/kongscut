@@ -1,9 +1,9 @@
 import 'package:barber/extensions/extensions.dart';
-import 'package:barber/model/regis_model.dart';
-import 'package:barber/services/api/register.dart';
+import 'package:barber/model/user/regis_model.dart';
+import 'package:barber/services/api/register_api.dart';
 import 'package:barber/services/local/shared_preferences.dart';
 import 'package:barber/utils/utils.dart';
-import 'package:barber/views/dashboard.dart';
+import 'package:barber/widget/botnav.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
         context,
       ).showSnackBar(const SnackBar(content: Text("Login successful")));
       PreferenceHandler.saveToken(user?.data.token.toString() ?? "");
-      context.pushReplacement(DashboardPage());
+      context.pushReplacement(Botbar());
       print(user?.toJson());
     } catch (e) {
       print(e);

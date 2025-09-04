@@ -1,6 +1,7 @@
 import 'package:barber/views/dashboard.dart';
 import 'package:barber/views/onboarding_page.dart';
 import 'package:barber/views/splashscreen.dart';
+import 'package:barber/widget/botnav.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
         SplashScreen.id: (context) => SplashScreen(),
         OnboardingPage.id: (context) => OnboardingPage(),
         DashboardPage.id: (context) => DashboardPage(),
+        Botbar.id: (context) => Botbar(),
       },
     );
   }

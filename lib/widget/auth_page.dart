@@ -67,7 +67,7 @@ class _AuthPageState extends State<AuthPage> {
                         });
                       },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: EdgeInsets.symmetric(vertical: 12),
                         decoration: BoxDecoration(
                           color: !isLogin
                               ? AppColors.darkRed
@@ -91,7 +91,7 @@ class _AuthPageState extends State<AuthPage> {
             const SizedBox(height: 20),
 
             // Tampilkan form sesuai toggle
-            Expanded(child: isLogin ? const LoginPage() : const RegisPage()),
+            Expanded(child: isLogin ? LoginPage() : RegisPage()),
           ],
         ),
       ),

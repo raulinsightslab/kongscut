@@ -1,8 +1,8 @@
 import 'package:barber/extensions/extensions.dart';
 import 'package:barber/services/local/shared_preferences.dart';
 import 'package:barber/utils/utils.dart';
-import 'package:barber/views/dashboard.dart';
 import 'package:barber/views/onboarding_page.dart';
+import 'package:barber/widget/botnav.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -28,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
       if (!mounted) return;
 
       if (isLogin == true) {
-        context.pushReplacementNamed(DashboardPage.id);
+        context.pushReplacementNamed(Botbar.id);
       } else {
         context.pushNamed(OnboardingPage.id);
       }

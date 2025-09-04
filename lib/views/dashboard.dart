@@ -1,10 +1,9 @@
 import 'package:barber/extensions/extensions.dart';
-import 'package:barber/model/get_service.dart';
+import 'package:barber/model/service/get_service.dart';
 import 'package:barber/services/api/service_api.dart';
 import 'package:barber/services/local/shared_preferences.dart';
 import 'package:barber/utils/utils.dart';
 import 'package:barber/views/onboarding_page.dart';
-import 'package:barber/widget/botnav.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -16,8 +15,24 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  int _currentIndex = 0;
+  final int _currentIndex = 0;
   late Future<GetServices> futureService;
+  // Future<void> _deleteService(String name) async {
+  //   try {
+  //     await AuthenticationAPIServices.deleteService(name: name);
+  //     // Refresh data setelah delete
+  //     setState(() {
+  //       futureService = AuthenticationAPIServices.getService();
+  //     });
+  //     ScaffoldMessenger.of(
+  //       context,
+  //     ).showSnackBar(SnackBar(content: Text("Service $name berhasil dihapus")));
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(
+  //       context,
+  //     ).showSnackBar(SnackBar(content: Text("Gagal hapus service: $e")));
+  //   }
+  // }
 
   @override
   void initState() {
@@ -118,44 +133,67 @@ class _DashboardPageState extends State<DashboardPage> {
                     physics: NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      childAspectRatio: 1.1,
                       crossAxisSpacing: 15,
                       mainAxisSpacing: 15,
+                      childAspectRatio: 0.8,
                     ),
                     itemBuilder: (context, index) {
                       final s = servicesList[index];
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Stack(
+                      return Stack(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(12),
+                                Expanded(
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(12),
+                                    ),
+                                    child: s.servicePhotoUrl.isNotEmpty
+                                        ? Image.network(
+                                            s.servicePhotoUrl,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Container(
+                                            width: double.infinity,
+                                            color: Colors.grey[300],
+                                            child: Icon(Icons.image, size: 50),
+                                          ),
                                   ),
-                                  child: s.servicePhotoUrl.isNotEmpty
-                                      ? Image.network(
-                                          s.servicePhotoUrl,
-                                          height: 160,
-                                          width: double.infinity,
-                                          fit: BoxFit.cover,
-                                        )
-                                      : Container(
-                                          height: 150,
-                                          width: double.infinity,
-                                          color: Colors.grey[300],
-                                          child: Icon(Icons.image, size: 50),
-                                        ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    s.name,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.black,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+                          // Tombol delete di pojok kanan atas
+                          // Positioned(
+                          //   top: 4,
+                          //   right: 4,
+                          //   child: IconButton(
+                          //     icon: Icon(Icons.delete, color: Colors.red),
+                          //     onPressed: () {
+                          //       _deleteService(s.name);
+                          //     },
+                          //   ),
+                          // ),
+                        ],
                       );
                     },
                   );
@@ -190,14 +228,15 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ),
       ),
-      bottomNavigationBar: BotNav(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-      ),
+
+      // bottomNavigationBar: Botbar(
+      //   currentIndex: _currentIndex,
+      //   onTap: (index) {
+      //     setState(() {
+      //       _currentIndex = index;
+      //     });
+      //   },
+      // ),
     );
   }
 
