@@ -1,7 +1,7 @@
 import 'package:barber/extensions/extensions.dart';
 import 'package:barber/services/local/shared_preferences.dart';
 import 'package:barber/utils/utils.dart';
-import 'package:barber/views/onboarding_page.dart';
+import 'package:barber/views/auth/onboarding_page.dart';
 import 'package:barber/widget/botnav.dart';
 import 'package:flutter/material.dart';
 

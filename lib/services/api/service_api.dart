@@ -1,37 +1,22 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:barber/model/service/add_services_model.dart';
 import 'package:barber/model/service/get_service.dart';
 import 'package:barber/services/api/endpoint/endpoint.dart';
 import 'package:barber/services/local/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class AuthenticationAPIServices {
-  // static Future<AddServices> addServices({
-  //   required String email,
-  //   required String password,
-  //   required String name,
-  // }) async {
-  //   final url = Uri.parse(Endpoint.services);
-  //   final response = await http.post(
-  //     url,
-  //     body: {"name": name, "email": email, "password": password},
-  //     headers: {"Accept": "application/json"},
-  //   );
-  //   if (response.statusCode == 200) {
-  //     return AddServices.fromJson(json.decode(response.body));
-  //   } else {
-  //     final error = json.decode(response.body);
-  //     throw Exception(error["message"] ?? "Register gagal");
-  //   }
-  // }
-
   static Future<GetServices> getService() async {
     final url = Uri.parse(Endpoint.services);
     final token = await PreferenceHandler.getToken();
     final response = await http.get(
       url,
-      headers: {"Accept": "application/json", "Authorization": "Bearer $token"},
+      headers: {
+        "Accept": "application/json",
+        if (token != null) "Authorization": "Bearer $token",
+      },
     );
     if (response.statusCode == 200) {
       return GetServices.fromJson(json.decode(response.body));
@@ -41,84 +26,47 @@ class AuthenticationAPIServices {
     }
   }
 
-  static Future<void> addService({
+  /// ✅ POST Service baru (pakai Base64 string untuk foto)
+  static Future<AddServices?> postService({
     required String name,
     required String description,
     required int price,
     required String employeeName,
-    required File employeePhoto,
     required File servicePhoto,
+    required File employeePhoto,
   }) async {
-    final uri = Uri.parse(Endpoint.services);
-    final token = await PreferenceHandler.getToken();
+    try {
+      final uri = Uri.parse(Endpoint.services);
+      final token = await PreferenceHandler.getToken();
 
-    var request = http.MultipartRequest('POST', uri);
+      // 🔹 convert file ke base64 string
+      String serviceBase64 = base64Encode(await servicePhoto.readAsBytes());
+      String employeeBase64 = base64Encode(await employeePhoto.readAsBytes());
 
-    // Header (tambahkan token kalau ada login)
-    request.headers['Accept'] = 'application/json';
-    if (token != null) {
-      request.headers['Authorization'] = 'Bearer $token';
-    }
+      final response = await http.post(
+        uri,
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          if (token != null) "Authorization": "Bearer $token",
+        },
+        body: json.encode({
+          "name": name,
+          "description": description,
+          "price": price,
+          "employee_name": employeeName,
+          "service_photo": serviceBase64, // ✅ string base64
+          "employee_photo": employeeBase64, // ✅ string base64
+        }),
+      );
 
-    // Field text
-    request.fields['name'] = name;
-    request.fields['description'] = description;
-    request.fields['price'] = price.toString();
-    request.fields['employee_name'] = employeeName;
-
-    // File upload (pastikan nama field sama persis dengan API backend)
-    request.files.add(
-      await http.MultipartFile.fromPath('employee_photo', employeePhoto.path),
-    );
-    request.files.add(
-      await http.MultipartFile.fromPath('service_photo', servicePhoto.path),
-    );
-
-    // Kirim request
-    final response = await request.send();
-
-    // Baca response body
-    final responseData = await response.stream.bytesToString();
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      print("✅ Service berhasil ditambahkan");
-      print("Response: $responseData");
-    } else {
-      print("❌ Gagal menambahkan service");
-      print("Status: ${response.statusCode}");
-      print("Response: $responseData");
-      throw Exception("Gagal menambahkan service (${response.statusCode})");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return addServicesFromJson(response.body);
+      } else {
+        throw Exception("Gagal upload service: ${response.body}");
+      }
+    } catch (e) {
+      throw Exception("❌ Error postService: $e");
     }
   }
 }
-
-  // static Future<GetServices> deleteService({required String name}) async {
-  //   final url = Uri.parse(Endpoint.services);
-  //   final response = await http.delete(
-  //     url,
-  //     body: {"name": name},
-  //     headers: {"Accept": "application/json"},
-  //   );
-  //   if (response.statusCode == 200) {
-  //     return GetServices.fromJson(json.decode(response.body));
-  //   } else {
-  //     final error = json.decode(response.body);
-  //     throw Exception(error["message"] ?? "gagal");
-  //   }
-  // }
-
-  // static Future<GetUserModel> updateUser({required String name}) async {
-  //   final url = Uri.parse(Endpoint.profile);
-  //   final response = await http.post(
-  //     url,
-  //     body: {"name": name},
-  //     headers: {"Accept": "application/json"},
-  //   );
-  //   if (response.statusCode == 200) {
-  //     return GetUserModel.fromJson(json.decode(response.body));
-  //   } else {
-  //     final error = json.decode(response.body);
-  //     throw Exception(error["message"] ?? "Register gagal");
-  //   }
-  // }
-

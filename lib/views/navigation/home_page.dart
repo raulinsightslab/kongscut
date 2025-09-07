@@ -3,7 +3,7 @@ import 'package:barber/model/service/get_service.dart';
 import 'package:barber/services/api/service_api.dart';
 import 'package:barber/services/local/shared_preferences.dart';
 import 'package:barber/utils/utils.dart';
-import 'package:barber/views/onboarding_page.dart';
+import 'package:barber/views/auth/onboarding_page.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -15,24 +15,8 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  final int _currentIndex = 0;
+  int _currentIndex = 0; // jangan pakai final biar bisa diubah
   late Future<GetServices> futureService;
-  // Future<void> _deleteService(String name) async {
-  //   try {
-  //     await AuthenticationAPIServices.deleteService(name: name);
-  //     // Refresh data setelah delete
-  //     setState(() {
-  //       futureService = AuthenticationAPIServices.getService();
-  //     });
-  //     ScaffoldMessenger.of(
-  //       context,
-  //     ).showSnackBar(SnackBar(content: Text("Service $name berhasil dihapus")));
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(
-  //       context,
-  //     ).showSnackBar(SnackBar(content: Text("Gagal hapus service: $e")));
-  //   }
-  // }
 
   @override
   void initState() {
@@ -46,7 +30,7 @@ class _DashboardPageState extends State<DashboardPage> {
       backgroundColor: AppColors.offWhite,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -73,7 +57,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: AppColors.darkRed,
-                  image: DecorationImage(
+                  image: const DecorationImage(
                     image: AssetImage("assets/images/logo_kongcuts_fix.png"),
                     fit: BoxFit.cover,
                   ),
@@ -114,7 +98,7 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
               const SizedBox(height: 10),
 
-              FutureBuilder(
+              FutureBuilder<GetServices>(
                 future: futureService,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -130,75 +114,71 @@ class _DashboardPageState extends State<DashboardPage> {
                   return GridView.builder(
                     itemCount: servicesList.length,
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 15,
-                      mainAxisSpacing: 15,
-                      childAspectRatio: 0.8,
-                    ),
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 15,
+                          mainAxisSpacing: 15,
+                          childAspectRatio: 0.8,
+                        ),
                     itemBuilder: (context, index) {
                       final s = servicesList[index];
-                      return Stack(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(12),
-                                    ),
-                                    child: s.servicePhotoUrl.isNotEmpty
-                                        ? Image.network(
-                                            s.servicePhotoUrl,
-                                            width: double.infinity,
-                                            fit: BoxFit.cover,
-                                          )
-                                        : Container(
-                                            width: double.infinity,
-                                            color: Colors.grey[300],
-                                            child: Icon(Icons.image, size: 50),
-                                          ),
-                                  ),
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(12),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    s.name,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.black,
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
+                                child: (s.servicePhotoUrl.isNotEmpty)
+                                    ? Image.network(
+                                        s.servicePhotoUrl,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (context, error, stack) =>
+                                            const Icon(
+                                              Icons.broken_image,
+                                              size: 50,
+                                            ),
+                                      )
+                                    : Container(
+                                        width: double.infinity,
+                                        color: Colors.grey[300],
+                                        child: const Icon(
+                                          Icons.image,
+                                          size: 50,
+                                        ),
+                                      ),
+                              ),
                             ),
-                          ),
-                          // Tombol delete di pojok kanan atas
-                          // Positioned(
-                          //   top: 4,
-                          //   right: 4,
-                          //   child: IconButton(
-                          //     icon: Icon(Icons.delete, color: Colors.red),
-                          //     onPressed: () {
-                          //       _deleteService(s.name);
-                          //     },
-                          //   ),
-                          // ),
-                        ],
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                s.name,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.black,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       );
                     },
                   );
                 },
               ),
+
+              const SizedBox(height: 20),
 
               SizedBox(
                 width: double.infinity,
@@ -211,9 +191,12 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   onPressed: () {
                     PreferenceHandler.removeLogin();
-                    context.pushReplacement(OnboardingPage());
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const OnboardingPage()),
+                    );
                   },
-                  child: Text(
+                  child: const Text(
                     "LOG OUT",
                     style: TextStyle(
                       fontFamily: "Poppins",
@@ -229,6 +212,7 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
       ),
 
+      // Bottom Navigation
       // bottomNavigationBar: Botbar(
       //   currentIndex: _currentIndex,
       //   onTap: (index) {
@@ -239,40 +223,4 @@ class _DashboardPageState extends State<DashboardPage> {
       // ),
     );
   }
-
-  // Widget _serviceCard(String title, String imageUrl) {
-  //   return Container(
-  //     decoration: BoxDecoration(
-  //       color: AppColors.white,
-  //       borderRadius: BorderRadius.circular(20),
-  //       boxShadow: [
-  //         BoxShadow(
-  //           color: Colors.black.withOpacity(0.05),
-  //           blurRadius: 5,
-  //           offset: const Offset(2, 2),
-  //         ),
-  //       ],
-  //     ),
-  //     child: Column(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [
-  //         Image.network(
-  //           imageUrl,
-  //           height: 60,
-  //           errorBuilder: (context, error, stackTrace) =>
-  //               const Icon(Icons.broken_image, size: 60),
-  //         ),
-  //         const SizedBox(height: 10),
-  //         Text(
-  //           title,
-  //           style: TextStyle(
-  //             fontSize: 16,
-  //             fontWeight: FontWeight.w600,
-  //             color: AppColors.black,
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }

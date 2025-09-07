@@ -1,8 +1,9 @@
 import 'package:barber/utils/utils.dart';
-import 'package:barber/views/bookings_page.dart';
-import 'package:barber/views/dashboard.dart';
-import 'package:barber/views/profile_page.dart';
-import 'package:barber/views/services_page.dart';
+import 'package:barber/views/navigation/services_page.dart';
+import 'package:barber/views/navigation/barbers.dart';
+import 'package:barber/views/navigation/bookings_page.dart';
+import 'package:barber/views/navigation/home_page.dart';
+import 'package:barber/views/navigation/profile_page.dart';
 import 'package:flutter/material.dart';
 
 class Botbar extends StatefulWidget {
@@ -18,7 +19,8 @@ class _BotbarState extends State<Botbar> {
 
   final List<Widget> _widgetOptions = <Widget>[
     DashboardPage(),
-    AddServicesPage(),
+    ServicesPage(),
+    // BarbersPage(),
     BookingsPage(),
     ProfilePage(),
   ];
@@ -44,6 +46,7 @@ class _BotbarState extends State<Botbar> {
             icon: Icon(Icons.content_cut),
             label: "Services",
           ),
+          // BottomNavigationBarItem(icon: Icon(Icons.brush), label: "Barbers"),
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today),
             label: "Bookings",

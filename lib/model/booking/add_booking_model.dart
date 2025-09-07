@@ -1,22 +1,22 @@
 // To parse this JSON data, do
 //
-//     final bookingModel = bookingModelFromJson(jsonString);
+//     final addBooking = addBookingFromJson(jsonString);
 
 import 'dart:convert';
 
-BookingModel bookingModelFromJson(String str) =>
-    BookingModel.fromJson(json.decode(str));
+AddBooking addBookingFromJson(String str) =>
+    AddBooking.fromJson(json.decode(str));
 
-String bookingModelToJson(BookingModel data) => json.encode(data.toJson());
+String addBookingToJson(AddBooking data) => json.encode(data.toJson());
 
-class BookingModel {
+class AddBooking {
   String message;
   Data data;
 
-  BookingModel({required this.message, required this.data});
+  AddBooking({required this.message, required this.data});
 
-  factory BookingModel.fromJson(Map<String, dynamic> json) =>
-      BookingModel(message: json["message"], data: Data.fromJson(json["data"]));
+  factory AddBooking.fromJson(Map<String, dynamic> json) =>
+      AddBooking(message: json["message"], data: Data.fromJson(json["data"]));
 
   Map<String, dynamic> toJson() => {"message": message, "data": data.toJson()};
 }

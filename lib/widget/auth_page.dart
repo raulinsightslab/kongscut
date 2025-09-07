@@ -1,6 +1,6 @@
 import 'package:barber/utils/utils.dart';
-import 'package:barber/views/login_page.dart';
-import 'package:barber/views/regis_page.dart';
+import 'package:barber/views/auth/login_page.dart';
+import 'package:barber/views/auth/regis_page.dart';
 import 'package:flutter/material.dart';
 
 class AuthPage extends StatefulWidget {
