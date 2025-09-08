@@ -1,9 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:barber/data/api/register_api.dart';
 import 'package:barber/data/api/service_api.dart';
 import 'package:barber/data/local/shared_preferences.dart';
 import 'package:barber/model/service/get_service.dart';
+import 'package:barber/model/user/get_user.dart';
 import 'package:barber/utils/utils.dart';
 import 'package:barber/views/auth/onboarding_page.dart';
-import 'package:flutter/material.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -14,13 +16,15 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  final int _currentIndex = 0; // jangan pakai final biar bisa diubah
+  int _currentIndex = 0; // boleh diubah nanti
   late Future<GetServices> futureService;
+  Future<GetUserModel>? futureUser;
 
   @override
   void initState() {
     super.initState();
     futureService = AuthenticationAPIServices.getService();
+    futureUser = AuthenticationAPI.getProfile();
   }
 
   @override
@@ -29,27 +33,56 @@ class _DashboardPageState extends State<DashboardPage> {
       backgroundColor: AppColors.offWhite,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Greeting
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    "Hi Client, 👋",
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.black,
+                  // Nama user
+                  Expanded(
+                    child: FutureBuilder<GetUserModel>(
+                      future: futureUser,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Text(
+                            "Welcome, ...",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        } else if (snapshot.hasError ||
+                            snapshot.data?.data == null) {
+                          return const Text(
+                            "Welcome, User",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        } else {
+                          final user = snapshot.data!.data!;
+                          return Text(
+                            "Hi, ${user.name} 👋",
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        }
+                      },
                     ),
                   ),
+
+                  // Icon notifikasi tetap di kanan
                   Icon(Icons.notifications, color: AppColors.darkRed),
                 ],
               ),
-              const SizedBox(height: 20),
 
+              SizedBox(height: 20),
               // Banner Promo
               Container(
                 height: 150,
@@ -113,7 +146,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   return GridView.builder(
                     itemCount: servicesList.length,
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
@@ -210,16 +243,6 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ),
       ),
-
-      // Bottom Navigation
-      // bottomNavigationBar: Botbar(
-      //   currentIndex: _currentIndex,
-      //   onTap: (index) {
-      //     setState(() {
-      //       _currentIndex = index;
-      //     });
-      //   },
-      // ),
     );
   }
 }

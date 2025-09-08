@@ -29,7 +29,8 @@ class BookingApiService {
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      return addBookingFromJson(jsonDecode(response.body));
+      // 👇 ini cukup decode sekali aja
+      return AddBooking.fromJson(json.decode(response.body));
     } else {
       throw Exception("❌ Gagal booking: ${response.body}");
     }

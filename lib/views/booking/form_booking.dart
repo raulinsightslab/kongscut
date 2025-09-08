@@ -23,7 +23,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
       lastDate: DateTime(2100),
     );
 
-    if (date != null) {
+    if (date != null && mounted) {
       final TimeOfDay? time = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.now(),
@@ -44,7 +44,14 @@ class _BookingFormPageState extends State<BookingFormPage> {
   }
 
   Future<void> _submitBooking() async {
-    if (_selectedDateTime == null) return;
+    if (_selectedDateTime == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("❌ Silakan pilih tanggal & jam dulu")),
+        );
+      }
+      return;
+    }
 
     setState(() => _isLoading = true);
 
@@ -54,25 +61,32 @@ class _BookingFormPageState extends State<BookingFormPage> {
         bookingTime: _selectedDateTime!,
       );
 
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(booking.message)));
-        Navigator.pop(context, true); // balik dengan status sukses
-      }
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("✅ ${booking.message}")));
+
+      Navigator.pop(context, true); // balik dengan status sukses
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text("❌ Error: $e")));
+        ).showSnackBar(SnackBar(content: Text("❌ Error booking: $e")));
       }
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final String? formattedDate = _selectedDateTime != null
+        ? DateFormat('dd MMM yyyy, HH:mm').format(_selectedDateTime!)
+        : null;
+
     return Scaffold(
       appBar: AppBar(title: const Text("Booking Layanan")),
       body: Padding(
@@ -87,13 +101,14 @@ class _BookingFormPageState extends State<BookingFormPage> {
             const SizedBox(height: 16),
             if (_selectedDateTime != null)
               Text(
-                "Dipilih: ${DateFormat('dd MMM yyyy, HH:mm').format(_selectedDateTime!)}",
+                "Dipilih: $formattedDate",
+                style: const TextStyle(fontSize: 16),
               ),
             const Spacer(),
             ElevatedButton(
               onPressed: _isLoading ? null : _submitBooking,
               style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 50),
+                minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),

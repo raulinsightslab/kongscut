@@ -1,5 +1,6 @@
 import 'package:barber/extensions/extensions.dart';
 import 'package:barber/views/settings/admin%20_page.dart';
+import 'package:barber/views/settings/admin_list_services.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -55,7 +56,15 @@ class _SettingsPageState extends State<SettingsPage> {
             title: const Text("Masuk sebagai Admin"),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
-              context.push(AdminPage());
+              context.push(AdminServicePage());
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.admin_panel_settings, color: Colors.red),
+            title: const Text("Masuk sebagai Admin 2"),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () {
+              context.push(AdminServiceListPage());
             },
           ),
           ListTile(

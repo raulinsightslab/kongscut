@@ -68,4 +68,85 @@ class AuthenticationAPIServices {
       throw Exception("❌ Error postService: $e");
     }
   }
+
+  //Update
+  static Future updateService({
+    required int id,
+    required String name,
+    required String description,
+    required double price,
+    required String employeeName,
+    File? servicePhoto,
+    File? employeePhoto,
+  }) async {
+    try {
+      final token = await PreferenceHandler.getToken();
+      final request = http.MultipartRequest(
+        'POST', // Biasanya POST untuk update dengan multipart
+        Uri.parse("${Endpoint.services}/$id"),
+      );
+
+      // Tambahkan header authorization
+      request.headers['Authorization'] = 'Bearer $token';
+      request.headers['Accept'] = 'application/json';
+
+      // Gunakan field names yang sesuai dengan backend (biasanya snake_case)
+      request.fields['name'] = name;
+      request.fields['description'] = description;
+      request.fields['price'] = price.toString();
+      request.fields['employee_name'] =
+          employeeName; // Perhatikan: employee_name bukan employeeName
+      request.fields['_method'] =
+          'PUT'; // Jika backend memerlukan ini untuk override method
+
+      if (servicePhoto != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'service_photo',
+            servicePhoto.path,
+          ), // service_photo bukan servicePhoto
+        );
+      }
+
+      if (employeePhoto != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'employee_photo',
+            employeePhoto.path,
+          ), // employee_photo bukan employeePhoto
+        );
+      }
+
+      final response = await request.send();
+      final resBody = await response.stream.bytesToString();
+
+      if (response.statusCode != 200) {
+        throw Exception(
+          "Error updateService: ${response.statusCode}, $resBody",
+        );
+      }
+    } catch (e) {
+      throw Exception("❌ Error updateService: $e");
+    }
+  }
+
+  /// ✅ DELETE Service
+  static Future<bool> deleteService(int id) async {
+    try {
+      final uri = Uri.parse("${Endpoint.services}/$id");
+      final token = await PreferenceHandler.getToken();
+
+      final response = await http.delete(
+        uri,
+        headers: {
+          "Accept": "application/json",
+          if (token != null) "Authorization": "Bearer $token",
+        },
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      throw Exception("❌ Error deleteService: $e");
+    }
+  }
 }

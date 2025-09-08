@@ -24,7 +24,6 @@ class _AuthPageState extends State<AuthPage> {
             // Logo di atas
             Image.asset("assets/images/logo_kongcuts_fix.png", height: 300),
             SizedBox(height: 30),
-
             // Tombol toggle Login & Register
             Container(
               decoration: BoxDecoration(

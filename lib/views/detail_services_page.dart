@@ -1,5 +1,5 @@
 import 'package:barber/model/service/get_service.dart';
-import 'package:barber/views/form_booking.dart';
+import 'package:barber/views/booking/form_booking.dart';
 import 'package:flutter/material.dart';
 
 class DetailServicePage extends StatefulWidget {
