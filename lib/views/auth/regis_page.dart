@@ -1,6 +1,6 @@
+import 'package:barber/data/api/register_api.dart';
+import 'package:barber/data/local/shared_preferences.dart';
 import 'package:barber/model/user/regis_model.dart';
-import 'package:barber/services/api/register_api.dart';
-import 'package:barber/services/local/shared_preferences.dart';
 import 'package:barber/utils/utils.dart';
 import 'package:flutter/material.dart';
 

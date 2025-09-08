@@ -1,7 +1,8 @@
 import 'dart:convert';
+
+import 'package:barber/data/api/endpoint/endpoint.dart';
+import 'package:barber/data/local/shared_preferences.dart';
 import 'package:barber/model/user/regis_model.dart';
-import 'package:barber/services/api/endpoint/endpoint.dart';
-import 'package:barber/services/local/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class AuthenticationAPI {

@@ -1,143 +1,186 @@
-import 'dart:io';
-import 'package:barber/model/service/add_services_model.dart';
-import 'package:barber/services/api/service_api.dart';
+import 'package:barber/data/api/service_api.dart';
+import 'package:barber/data/local/shared_preferences.dart';
+import 'package:barber/extensions/extensions.dart';
+import 'package:barber/model/service/get_service.dart';
+import 'package:barber/utils/utils.dart';
+import 'package:barber/views/auth/onboarding_page.dart';
+import 'package:barber/views/detail_services_page.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 class ServicesPage extends StatefulWidget {
   const ServicesPage({super.key});
-  static const id = "/servis";
+  static const id = "/dashboard";
 
   @override
   State<ServicesPage> createState() => _ServicesPageState();
 }
 
 class _ServicesPageState extends State<ServicesPage> {
-  final _formKey = GlobalKey<FormState>();
-  final ImagePicker _picker = ImagePicker();
+  final int _currentIndex = 0; // jangan pakai final biar bisa diubah
+  late Future<GetServices> futureService;
 
-  XFile? serviceFile;
-  XFile? employeeFile;
-
-  final TextEditingController nameCtrl = TextEditingController();
-  final TextEditingController descCtrl = TextEditingController();
-  final TextEditingController priceCtrl = TextEditingController();
-  final TextEditingController employeeNameCtrl = TextEditingController();
-
-  Future<void> pickServiceFoto() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) setState(() => serviceFile = image);
-  }
-
-  Future<void> pickEmployeeFoto() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) setState(() => employeeFile = image);
-  }
-
-  Future<void> submitService() async {
-    if (!_formKey.currentState!.validate()) return;
-    if (serviceFile == null || employeeFile == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("⚠️ Pilih foto service & employee dulu")),
-      );
-      return;
-    }
-
-    try {
-      final AddServices? response = await AuthenticationAPIServices.postService(
-        name: nameCtrl.text,
-        description: descCtrl.text,
-        price: int.parse(priceCtrl.text),
-        employeeName: employeeNameCtrl.text,
-        servicePhoto: File(serviceFile!.path), // ✅ kirim File asli
-        employeePhoto: File(employeeFile!.path), // ✅ kirim File asli
-      );
-
-      if (response != null) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("✅ ${response.message}")));
-        // Reset form
-        nameCtrl.clear();
-        descCtrl.clear();
-        priceCtrl.clear();
-        employeeNameCtrl.clear();
-        setState(() {
-          serviceFile = null;
-          employeeFile = null;
-        });
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("❌ Gagal tambah service: $e")));
-    }
+  @override
+  void initState() {
+    super.initState();
+    futureService = AuthenticationAPIServices.getService();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Tambah Service")),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      backgroundColor: AppColors.offWhite,
+      body: SafeArea(
         child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: nameCtrl,
-                  decoration: const InputDecoration(labelText: "Nama Service"),
-                  validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
-                ),
-                TextFormField(
-                  controller: descCtrl,
-                  decoration: const InputDecoration(labelText: "Deskripsi"),
-                  validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
-                ),
-                TextFormField(
-                  controller: priceCtrl,
-                  decoration: const InputDecoration(labelText: "Harga"),
-                  keyboardType: TextInputType.number,
-                  validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
-                ),
-                TextFormField(
-                  controller: employeeNameCtrl,
-                  decoration: const InputDecoration(labelText: "Nama Pegawai"),
-                  validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
-                ),
-                const SizedBox(height: 20),
+          padding: EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Greeting
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Our Services",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.darkRed,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
 
-                // Foto Service
-                serviceFile != null
-                    ? Image.file(File(serviceFile!.path), height: 100)
-                    : const Text("Belum pilih foto service"),
-                ElevatedButton(
-                  onPressed: pickServiceFoto,
-                  child: const Text("Pilih Foto Service"),
-                ),
+              // Categories dari API
+              FutureBuilder<GetServices>(
+                future: futureService,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text("Error: ${snapshot.error}"));
+                  } else if (!snapshot.hasData || snapshot.data!.data.isEmpty) {
+                    return const Center(child: Text("No services available"));
+                  }
 
-                const SizedBox(height: 20),
+                  final servicesList = snapshot.data!.data;
 
-                // Foto Employee
-                employeeFile != null
-                    ? Image.file(File(employeeFile!.path), height: 100)
-                    : const Text("Belum pilih foto employee"),
-                ElevatedButton(
-                  onPressed: pickEmployeeFoto,
-                  child: const Text("Pilih Foto Employee"),
-                ),
+                  return GridView.builder(
+                    itemCount: servicesList.length,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 15,
+                          mainAxisSpacing: 15,
+                          childAspectRatio: 0.8,
+                        ),
+                    itemBuilder: (context, index) {
+                      final s = servicesList[index];
+                      return GestureDetector(
+                        onTap: () {
+                          context.push(DetailServicePage(service: s));
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(12),
+                                  ),
+                                  child: (s.servicePhotoUrl.isNotEmpty)
+                                      ? Image.network(
+                                          s.servicePhotoUrl,
+                                          width: double.infinity,
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (context, error, stack) =>
+                                                  const Icon(
+                                                    Icons.broken_image,
+                                                    size: 50,
+                                                  ),
+                                        )
+                                      : Container(
+                                          width: double.infinity,
+                                          color: Colors.grey[300],
+                                          child: const Icon(
+                                            Icons.image,
+                                            size: 50,
+                                          ),
+                                        ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  s.name,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.black,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
 
-                const SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: submitService,
-                  child: const Text("Tambah Service"),
+              const SizedBox(height: 20),
+
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.yellow,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed: () {
+                    PreferenceHandler.removeLogin();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const OnboardingPage()),
+                    );
+                  },
+                  child: const Text(
+                    "LOG OUT",
+                    style: TextStyle(
+                      fontFamily: "Poppins",
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
+
+      // Bottom Navigation
+      // bottomNavigationBar: Botbar(
+      //   currentIndex: _currentIndex,
+      //   onTap: (index) {
+      //     setState(() {
+      //       _currentIndex = index;
+      //     });
+      //   },
+      // ),
     );
   }
 }

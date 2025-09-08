@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:barber/data/api/endpoint/endpoint.dart';
+import 'package:barber/data/local/shared_preferences.dart';
 import 'package:barber/model/service/add_services_model.dart';
 import 'package:barber/model/service/get_service.dart';
-import 'package:barber/services/api/endpoint/endpoint.dart';
-import 'package:barber/services/local/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class AuthenticationAPIServices {
@@ -38,7 +38,6 @@ class AuthenticationAPIServices {
     try {
       final uri = Uri.parse(Endpoint.services);
       final token = await PreferenceHandler.getToken();
-
       // 🔹 convert file ke base64 string
       String serviceBase64 = base64Encode(await servicePhoto.readAsBytes());
       String employeeBase64 = base64Encode(await employeePhoto.readAsBytes());

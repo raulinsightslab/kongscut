@@ -1,7 +1,6 @@
-import 'package:barber/extensions/extensions.dart';
+import 'package:barber/data/api/service_api.dart';
+import 'package:barber/data/local/shared_preferences.dart';
 import 'package:barber/model/service/get_service.dart';
-import 'package:barber/services/api/service_api.dart';
-import 'package:barber/services/local/shared_preferences.dart';
 import 'package:barber/utils/utils.dart';
 import 'package:barber/views/auth/onboarding_page.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +14,7 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  int _currentIndex = 0; // jangan pakai final biar bisa diubah
+  final int _currentIndex = 0; // jangan pakai final biar bisa diubah
   late Future<GetServices> futureService;
 
   @override
@@ -114,7 +113,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   return GridView.builder(
                     itemCount: servicesList.length,
                     shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
+                    physics: NeverScrollableScrollPhysics(),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,

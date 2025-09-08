@@ -1,6 +1,7 @@
 import 'dart:io';
+
+import 'package:barber/data/api/service_api.dart';
 import 'package:barber/model/service/add_services_model.dart';
-import 'package:barber/services/api/service_api.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -49,8 +50,8 @@ class _AdminPageState extends State<AdminPage> {
         description: descCtrl.text,
         price: int.parse(priceCtrl.text),
         employeeName: employeeNameCtrl.text,
-        servicePhoto: File(serviceFile!.path), // ✅ kirim File asli
-        employeePhoto: File(employeeFile!.path), // ✅ kirim File asli
+        servicePhoto: File(serviceFile!.path),
+        employeePhoto: File(employeeFile!.path),
       );
 
       if (response != null) {
