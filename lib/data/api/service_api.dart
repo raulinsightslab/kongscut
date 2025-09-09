@@ -82,7 +82,7 @@ class AuthenticationAPIServices {
     try {
       final token = await PreferenceHandler.getToken();
       final request = http.MultipartRequest(
-        'POST', // Biasanya POST untuk update dengan multipart
+        'POST',
         Uri.parse("${Endpoint.services}/$id"),
       );
 

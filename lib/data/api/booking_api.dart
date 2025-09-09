@@ -4,6 +4,7 @@ import 'package:barber/data/api/endpoint/endpoint.dart';
 import 'package:barber/data/local/shared_preferences.dart';
 import 'package:barber/model/booking/add_booking_model.dart';
 import 'package:barber/model/booking/get_booking.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class BookingApiService {
@@ -56,6 +57,53 @@ class BookingApiService {
     } else {
       final error = json.decode(response.body);
       throw Exception(error["message"] ?? "Gagal mengambil riwayat booking");
+    }
+  }
+
+  /// ✅ Update status booking (Pending -> Confirmed/Cancelled)
+  static Future<bool> updateBookingStatus({
+    required int id,
+    required String status,
+  }) async {
+    try {
+      final token = await PreferenceHandler.getToken();
+
+      // Endpoint untuk update status - SESUAIKAN DENGAN API ANDA
+      final url = Uri.parse("${Endpoint.booking}/$id");
+      debugPrint("🌐 URL Update: $url");
+      debugPrint("📤 Request Body: {status: $status}");
+
+      final response = await http.put(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          if (token != null) "Authorization": "Bearer $token",
+        },
+        body: jsonEncode({"status": status}),
+      );
+
+      debugPrint("📊 Status Code: ${response.statusCode}");
+      debugPrint("📦 Response Body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData["success"] == true ||
+            responseData["message"] != null) {
+          debugPrint("✅ Status berhasil diupdate");
+          return true;
+        } else {
+          debugPrint("❌ Response tidak menunjukkan success");
+          return false;
+        }
+      } else {
+        final error = json.decode(response.body);
+        debugPrint("❌ Gagal update status: ${error["message"]}");
+        return false;
+      }
+    } catch (e) {
+      debugPrint("❌ Exception saat update status: $e");
+      return false;
     }
   }
 }

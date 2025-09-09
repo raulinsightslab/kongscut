@@ -1,5 +1,6 @@
 import 'package:barber/extensions/extensions.dart';
 import 'package:barber/views/settings/admin%20_page.dart';
+import 'package:barber/views/settings/admin_booking.dart';
 import 'package:barber/views/settings/admin_list_services.dart';
 import 'package:flutter/material.dart';
 
@@ -69,10 +70,10 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           ListTile(
             leading: const Icon(Icons.lock, color: Colors.red),
-            title: const Text("Privasi & Keamanan"),
+            title: const Text("Admin Booking"),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
-              // Tambah page privasi kalau perlu
+              context.push(AdminBookingPage());
             },
           ),
           ListTile(

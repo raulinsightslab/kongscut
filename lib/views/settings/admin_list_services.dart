@@ -88,6 +88,13 @@ class _AdminServiceListPageState extends State<AdminServiceListPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: Row(
                 children: [
+                  // Tombol Back
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    color: AppColors.darkGrey,
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  const SizedBox(width: 8),
                   const Expanded(
                     child: Text(
                       "Kelola Services",

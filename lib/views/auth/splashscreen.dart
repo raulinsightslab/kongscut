@@ -4,6 +4,7 @@ import 'package:barber/utils/utils.dart';
 import 'package:barber/views/auth/onboarding_page.dart';
 import 'package:barber/widget/botnav.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -40,6 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: AppColors.offWhite,
       body: Center(
+        child: Lottie.asset("assets/lotiie/animation.json"),
         // child: Image.asset(AppImage.logo, width: 275, fit: BoxFit.cover),
       ),
     );

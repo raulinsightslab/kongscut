@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:barber/data/api/register_api.dart';
 import 'package:barber/data/api/service_api.dart';
@@ -6,6 +7,8 @@ import 'package:barber/model/service/get_service.dart';
 import 'package:barber/model/user/get_user.dart';
 import 'package:barber/utils/utils.dart';
 import 'package:barber/views/auth/onboarding_page.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -20,6 +23,28 @@ class _DashboardPageState extends State<DashboardPage> {
   late Future<GetServices> futureService;
   Future<GetUserModel>? futureUser;
 
+  int activeIndex = 0;
+  final controller = CarouselController();
+  final List<Map<String, dynamic>> infoList = [
+    {
+      "icon": Icons.access_time,
+      "color": Colors.amber,
+      "title": "JAM OPERASIONAL",
+      "subtitle": "Open Senin - Minggu\n10.00 – 21.00 (Last order 20.30)",
+    },
+    {
+      "icon": Icons.location_on,
+      "color": Colors.red,
+      "title": "LOKASI",
+      "subtitle": "Jl. Merdeka No. 45, Jakarta",
+    },
+    {
+      "icon": Iconsax.whatsapp,
+      "color": Colors.green,
+      "title": "LAYANAN PELANGGAN",
+      "subtitle": "0812-8077-7736",
+    },
+  ];
   @override
   void initState() {
     super.initState();
@@ -81,43 +106,136 @@ class _DashboardPageState extends State<DashboardPage> {
                   Icon(Icons.notifications, color: AppColors.darkRed),
                 ],
               ),
-
               SizedBox(height: 20),
               // Banner Promo
-              Container(
-                height: 150,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: AppColors.darkRed,
-                  image: const DecorationImage(
-                    image: AssetImage("assets/images/logo_kongcuts_fix.png"),
-                    fit: BoxFit.cover,
-                  ),
+              CarouselSlider(
+                options: CarouselOptions(
+                  height: 350,
+                  autoPlay: true,
+                  enlargeCenterPage: true,
+                  viewportFraction: 1.0,
+                  autoPlayInterval: const Duration(seconds: 3),
                 ),
+                items:
+                    [
+                      "assets/images/banner_promo.png",
+                      "assets/images/poto_pomade1.png",
+                      "assets/images/poto_tempat.png",
+                    ].map((imgPath) {
+                      return Builder(
+                        builder: (BuildContext context) {
+                          return Stack(
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                margin: EdgeInsets.symmetric(horizontal: 5.0),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  image: DecorationImage(
+                                    image: AssetImage(imgPath),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                top: 10,
+                                right: 10,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(
+                                      0.7,
+                                    ), // background biar jelas
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Image.asset(
+                                    "assets/images/logo_kongcuts_fix.png",
+                                    width: 30,
+                                    height: 30,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }).toList(),
               ),
-              const SizedBox(height: 20),
 
-              // Unpaid Bookings
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: ListTile(
-                  leading: Icon(Icons.warning, color: AppColors.darkRed),
-                  title: const Text("2 Unpaid Bookings"),
-                  trailing: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.darkRed,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    onPressed: () {},
-                    child: const Text("Pay Now"),
-                  ),
-                ),
-              ),
               const SizedBox(height: 20),
+              Column(
+                children: [
+                  CarouselSlider.builder(
+                    // carouselController: controller,
+                    itemCount: infoList.length,
+                    itemBuilder: (context, index, realIndex) {
+                      final item = infoList[index];
+                      return Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 30,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircleAvatar(
+                              radius: 25,
+                              backgroundColor: item["color"].withOpacity(0.2),
+                              child: Icon(
+                                item["icon"],
+                                color: item["color"],
+                                size: 30,
+                              ),
+                            ),
+                            const SizedBox(height: 15),
+                            Text(
+                              item["title"],
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              item["subtitle"],
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black54,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    options: CarouselOptions(
+                      height: 200,
+                      viewportFraction: 1.0,
+                      enableInfiniteScroll: false,
+                      autoPlay: false, // manual
+                      onPageChanged: (index, reason) =>
+                          setState(() => activeIndex = index),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  AnimatedSmoothIndicator(
+                    activeIndex: activeIndex,
+                    count: infoList.length,
+                    effect: const ExpandingDotsEffect(
+                      dotHeight: 8,
+                      dotWidth: 8,
+                      activeDotColor: Colors.black,
+                      dotColor: Colors.grey,
+                    ),
+                    // onDotClicked: (index) =>
+                    //     controller.animateToPage(index),
+                  ),
+                ],
+              ),
 
               // Categories dari API
               Text(
