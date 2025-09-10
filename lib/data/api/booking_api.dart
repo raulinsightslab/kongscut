@@ -4,7 +4,7 @@ import 'package:barber/data/api/endpoint/endpoint.dart';
 import 'package:barber/data/local/shared_preferences.dart';
 import 'package:barber/model/booking/add_booking_model.dart';
 import 'package:barber/model/booking/get_booking.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class BookingApiService {
@@ -59,8 +59,7 @@ class BookingApiService {
       throw Exception(error["message"] ?? "Gagal mengambil riwayat booking");
     }
   }
-
-  /// ✅ Update status booking (Pending -> Confirmed/Cancelled)
+    /// ✅ Update status booking (Pending -> Confirmed/Cancelled)
   static Future<bool> updateBookingStatus({
     required int id,
     required String status,
@@ -107,3 +106,5 @@ class BookingApiService {
     }
   }
 }
+
+

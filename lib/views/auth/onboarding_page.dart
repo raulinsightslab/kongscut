@@ -78,6 +78,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Image.asset(
+                        "assets/images/buat_onboarding_1.png",
+                        height: 280,
+                      ),
+                      SizedBox(height: 8),
                       Text(
                         "Professional Barber",
                         style: TextStyle(
@@ -102,6 +107,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Image.asset(
+                        "assets/images/onboarding_3.png",
+                        alignment: Alignment.center,
+                        height: 300,
+                      ),
+                      SizedBox(height: 2),
                       Text(
                         "Best Grooming Tools",
                         style: TextStyle(

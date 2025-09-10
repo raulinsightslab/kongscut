@@ -1,12 +1,10 @@
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/material.dart';
 import 'package:barber/data/api/register_api.dart';
 import 'package:barber/data/api/service_api.dart';
-import 'package:barber/data/local/shared_preferences.dart';
 import 'package:barber/model/service/get_service.dart';
 import 'package:barber/model/user/get_user.dart';
 import 'package:barber/utils/utils.dart';
-import 'package:barber/views/auth/onboarding_page.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -19,9 +17,9 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  int _currentIndex = 0; // boleh diubah nanti
+  final int _currentIndex = 0; // boleh diubah nanti
   late Future<GetServices> futureService;
-  Future<GetUserModel>? futureUser;
+  late Future<GetUserModel>? futureUser;
 
   int activeIndex = 0;
   final controller = CarouselController();
@@ -58,55 +56,111 @@ class _DashboardPageState extends State<DashboardPage> {
       backgroundColor: AppColors.offWhite,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Greeting
-              Row(
-                children: [
-                  // Nama user
-                  Expanded(
-                    child: FutureBuilder<GetUserModel>(
-                      future: futureUser,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Text(
-                            "Welcome, ...",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          );
-                        } else if (snapshot.hasError ||
-                            snapshot.data?.data == null) {
-                          return const Text(
-                            "Welcome, User",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          );
-                        } else {
-                          final user = snapshot.data!.data!;
-                          return Text(
-                            "Hi, ${user.name} 👋",
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          );
-                        }
-                      },
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 0,
+                  vertical: 12,
+                ),
+                child: Row(
+                  children: [
+                    // Avatar
+                    Container(
+                      width: 52,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppColors.darkRed.withOpacity(0.2),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.person,
+                        size: 28,
+                        color: AppColors.darkRed,
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 16),
 
-                  // Icon notifikasi tetap di kanan
-                  Icon(Icons.notifications, color: AppColors.darkRed),
-                ],
+                    // Nama + Subtitle
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          FutureBuilder<GetUserModel>(
+                            future: futureUser,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Text(
+                                  "Welcome, ...",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.black,
+                                  ),
+                                );
+                              } else if (snapshot.hasError ||
+                                  snapshot.data?.data == null) {
+                                return Text(
+                                  "Welcome, User",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.black,
+                                  ),
+                                );
+                              } else {
+                                final user = snapshot.data!.data!;
+                                return Text(
+                                  "Hi, ${user.name} 👋",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.black,
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            "Get sharp, feel confident, only at KongCuts!",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Icon Notifikasi
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.darkRed.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.notifications_none_outlined,
+                          color: AppColors.darkRed,
+                          size: 24,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               SizedBox(height: 20),
+
               // Banner Promo
               CarouselSlider(
                 options: CarouselOptions(
@@ -161,8 +215,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       );
                     }).toList(),
               ),
-
-              const SizedBox(height: 20),
+              SizedBox(height: 5),
               Column(
                 children: [
                   CarouselSlider.builder(
@@ -248,6 +301,85 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
               const SizedBox(height: 10),
 
+              // FutureBuilder<GetServices>(
+              //   future: futureService,
+              //   builder: (context, snapshot) {
+              //     if (snapshot.connectionState == ConnectionState.waiting) {
+              //       return const Center(child: CircularProgressIndicator());
+              //     } else if (snapshot.hasError) {
+              //       return Center(child: Text("Error: ${snapshot.error}"));
+              //     } else if (!snapshot.hasData || snapshot.data!.data.isEmpty) {
+              //       return const Center(child: Text("No services available"));
+              //     }
+
+              //     final servicesList = snapshot.data!.data;
+
+              //     return GridView.builder(
+              //       itemCount: servicesList.length,
+              //       shrinkWrap: true,
+              //       physics: const NeverScrollableScrollPhysics(),
+              //       gridDelegate:
+              //           const SliverGridDelegateWithFixedCrossAxisCount(
+              //             crossAxisCount: 2,
+              //             crossAxisSpacing: 15,
+              //             mainAxisSpacing: 15,
+              //             childAspectRatio: 0.8,
+              //           ),
+              //       itemBuilder: (context, index) {
+              //         final s = servicesList[index];
+              //         return Container(
+              //           decoration: BoxDecoration(
+              //             color: Colors.white,
+              //             borderRadius: BorderRadius.circular(12),
+              //           ),
+              //           child: Column(
+              //             crossAxisAlignment: CrossAxisAlignment.start,
+              //             children: [
+              //               Expanded(
+              //                 child: ClipRRect(
+              //                   borderRadius: const BorderRadius.vertical(
+              //                     top: Radius.circular(12),
+              //                   ),
+              //                   child: (s.servicePhotoUrl.isNotEmpty)
+              //                       ? Image.network(
+              //                           s.servicePhotoUrl,
+              //                           width: double.infinity,
+              //                           fit: BoxFit.cover,
+              //                           errorBuilder: (context, error, stack) =>
+              //                               const Icon(
+              //                                 Icons.broken_image,
+              //                                 size: 50,
+              //                               ),
+              //                         )
+              //                       : Container(
+              //                           width: double.infinity,
+              //                           color: Colors.grey[300],
+              //                           child: const Icon(
+              //                             Icons.image,
+              //                             size: 50,
+              //                           ),
+              //                         ),
+              //                 ),
+              //               ),
+              //               Padding(
+              //                 padding: const EdgeInsets.all(8.0),
+              //                 child: Text(
+              //                   s.name,
+              //                   style: TextStyle(
+              //                     fontWeight: FontWeight.w600,
+              //                     color: AppColors.black,
+              //                   ),
+              //                   maxLines: 2,
+              //                   overflow: TextOverflow.ellipsis,
+              //                 ),
+              //               ),
+              //             ],
+              //           ),
+              //         );
+              //       },
+              //     );
+              //   },
+              // ),
               FutureBuilder<GetServices>(
                 future: futureService,
                 builder: (context, snapshot) {
@@ -259,7 +391,8 @@ class _DashboardPageState extends State<DashboardPage> {
                     return const Center(child: Text("No services available"));
                   }
 
-                  final servicesList = snapshot.data!.data;
+                  // Urutkan supaya terbaru tampil duluan
+                  final servicesList = snapshot.data!.data.take(6).toList();
 
                   return GridView.builder(
                     itemCount: servicesList.length,
@@ -330,33 +463,33 @@ class _DashboardPageState extends State<DashboardPage> {
 
               const SizedBox(height: 20),
 
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.yellow,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  onPressed: () {
-                    PreferenceHandler.removeLogin();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => const OnboardingPage()),
-                    );
-                  },
-                  child: const Text(
-                    "LOG OUT",
-                    style: TextStyle(
-                      fontFamily: "Poppins",
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ),
+              // SizedBox(
+              //   width: double.infinity,
+              //   child: ElevatedButton(
+              //     style: ElevatedButton.styleFrom(
+              //       backgroundColor: Colors.yellow,
+              //       shape: RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(8),
+              //       ),
+              //     ),
+              //     onPressed: () {
+              //       PreferenceHandler.removeLogin();
+              //       Navigator.pushReplacement(
+              //         context,
+              //         MaterialPageRoute(builder: (_) => const OnboardingPage()),
+              //       );
+              //     },
+              //     child: const Text(
+              //       "LOG OUT",
+              //       style: TextStyle(
+              //         fontFamily: "Poppins",
+              //         fontSize: 18,
+              //         fontWeight: FontWeight.bold,
+              //         color: Colors.black,
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),

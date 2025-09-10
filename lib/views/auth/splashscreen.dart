@@ -1,6 +1,5 @@
 import 'package:barber/data/local/shared_preferences.dart';
 import 'package:barber/extensions/extensions.dart';
-import 'package:barber/utils/utils.dart';
 import 'package:barber/views/auth/onboarding_page.dart';
 import 'package:barber/widget/botnav.dart';
 import 'package:flutter/material.dart';
@@ -38,12 +37,14 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.offWhite,
-      body: Center(
-        child: Lottie.asset("assets/lotiie/animation.json"),
-        // child: Image.asset(AppImage.logo, width: 275, fit: BoxFit.cover),
-      ),
-    );
+    return Lottie.asset("assets/lotiie/animation.json", fit: BoxFit.fill);
+    // Scaffold(
+    // backgroundColor: AppColors.offWhite,
+    // body:
+    // Center(
+    //   child: Lottie.asset("assets/lotiie/animation.json"),
+    //   // child: Image.asset(AppImage.logo, width: 275, fit: BoxFit.cover),
+    // ),
+    // );
   }
 }

@@ -1,9 +1,8 @@
 import 'package:barber/utils/utils.dart';
 import 'package:barber/views/booking/booking_page.dart';
-import 'package:barber/views/booking/history_bookings_page.dart';
 import 'package:barber/views/navigation/home_page.dart';
 import 'package:barber/views/navigation/profile_page.dart';
-import 'package:barber/views/navigation/services_page.dart';
+import 'package:barber/views/services/services_page.dart';
 import 'package:flutter/material.dart';
 
 class Botbar extends StatefulWidget {

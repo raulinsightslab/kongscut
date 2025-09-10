@@ -1,6 +1,6 @@
 import 'package:barber/data/api/booking_api.dart';
-import 'package:flutter/material.dart';
 import 'package:barber/model/booking/get_booking.dart';
+import 'package:flutter/material.dart';
 
 class AdminBookingPage extends StatefulWidget {
   const AdminBookingPage({super.key});
@@ -11,8 +11,8 @@ class AdminBookingPage extends StatefulWidget {
 
 class _AdminBookingPageState extends State<AdminBookingPage> {
   late Future<List<Datum>> futureBookings;
-  bool _isLoading = false;
-  Map<int, bool> _updatingStatus = {};
+  final bool _isLoading = false;
+  final Map<int, bool> _updatingStatus = {};
   String _filterStatus = 'all'; // Filter status
 
   @override

@@ -1,7 +1,6 @@
 import 'package:barber/extensions/extensions.dart';
-import 'package:barber/views/settings/admin%20_page.dart';
-import 'package:barber/views/settings/admin_booking.dart';
-import 'package:barber/views/settings/admin_list_services.dart';
+import 'package:barber/views/profile/admin_booking.dart';
+import 'package:barber/views/profile/admin_list_services.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -30,7 +29,7 @@ class _SettingsPageState extends State<SettingsPage> {
           SizedBox(height: 10),
           // Notifikasi
           SwitchListTile(
-            activeColor: Colors.red,
+            activeThumbColor: Colors.red,
             title: const Text("Notifikasi"),
             value: isNotificationOn,
             onChanged: (val) {
@@ -41,7 +40,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           // Mode Gelap
           SwitchListTile(
-            activeColor: Colors.red,
+            activeThumbColor: Colors.red,
             title: const Text("Mode Gelap"),
             value: isDarkMode,
             onChanged: (val) {
@@ -57,7 +56,7 @@ class _SettingsPageState extends State<SettingsPage> {
             title: const Text("Masuk sebagai Admin"),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
-              context.push(AdminServicePage());
+              context.push(AdminBookingPage());
             },
           ),
           ListTile(

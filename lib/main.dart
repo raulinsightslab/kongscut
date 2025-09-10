@@ -1,6 +1,6 @@
-import 'package:barber/views/navigation/home_page.dart';
 import 'package:barber/views/auth/onboarding_page.dart';
 import 'package:barber/views/auth/splashscreen.dart';
+import 'package:barber/views/navigation/home_page.dart';
 import 'package:barber/widget/botnav.dart';
 import 'package:flutter/material.dart';
 

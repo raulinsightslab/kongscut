@@ -1,5 +1,5 @@
 import 'package:barber/extensions/extensions.dart';
-import 'package:barber/views/settings/settings_page.dart';
+import 'package:barber/views/profile/settings_page.dart';
 import 'package:flutter/material.dart';
 
 class ProfilePage extends StatefulWidget {

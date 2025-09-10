@@ -3,6 +3,7 @@ import 'package:barber/extensions/extensions.dart';
 import 'package:barber/model/service/get_service.dart';
 import 'package:barber/utils/utils.dart';
 import 'package:flutter/material.dart';
+
 import 'admin_service_form.dart';
 
 class AdminServiceListPage extends StatefulWidget {
@@ -246,14 +247,13 @@ class _AdminServiceListPageState extends State<AdminServiceListPage> {
                                   color: AppColors.primaryRed,
                                 ),
                               ),
-                              if (service.employeeName != null)
-                                Text(
-                                  "Pegawai: ${service.employeeName!}",
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: AppColors.darkGrey,
-                                  ),
+                              Text(
+                                "Pegawai: ${service.employeeName}",
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.darkGrey,
                                 ),
+                              ),
                             ],
                           ),
                           trailing: SizedBox(

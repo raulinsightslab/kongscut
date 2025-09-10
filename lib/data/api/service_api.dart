@@ -74,59 +74,43 @@ class AuthenticationAPIServices {
     required int id,
     required String name,
     required String description,
-    required double price,
+    required int price,
     required String employeeName,
-    File? servicePhoto,
-    File? employeePhoto,
+    required File servicePhoto,
+    required File employeePhoto,
   }) async {
     try {
+      final uri = Uri.parse(Endpoint.services);
       final token = await PreferenceHandler.getToken();
-      final request = http.MultipartRequest(
-        'POST',
-        Uri.parse("${Endpoint.services}/$id"),
+      // 🔹 convert file ke base64 string
+      String serviceBase64 = base64Encode(await servicePhoto.readAsBytes());
+      String employeeBase64 = base64Encode(await employeePhoto.readAsBytes());
+
+      final response = await http.put(
+        uri,
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          if (token != null) "Authorization": "Bearer $token",
+        },
+        body: json.encode({
+          "id": id,
+          "name": name,
+          "description": description,
+          "price": price,
+          "employee_name": employeeName,
+          "service_photo": serviceBase64, // ✅ string base64
+          "employee_photo": employeeBase64, // ✅ string base64
+        }),
       );
 
-      // Tambahkan header authorization
-      request.headers['Authorization'] = 'Bearer $token';
-      request.headers['Accept'] = 'application/json';
-
-      // Gunakan field names yang sesuai dengan backend (biasanya snake_case)
-      request.fields['name'] = name;
-      request.fields['description'] = description;
-      request.fields['price'] = price.toString();
-      request.fields['employee_name'] =
-          employeeName; // Perhatikan: employee_name bukan employeeName
-      request.fields['_method'] =
-          'PUT'; // Jika backend memerlukan ini untuk override method
-
-      if (servicePhoto != null) {
-        request.files.add(
-          await http.MultipartFile.fromPath(
-            'service_photo',
-            servicePhoto.path,
-          ), // service_photo bukan servicePhoto
-        );
-      }
-
-      if (employeePhoto != null) {
-        request.files.add(
-          await http.MultipartFile.fromPath(
-            'employee_photo',
-            employeePhoto.path,
-          ), // employee_photo bukan employeePhoto
-        );
-      }
-
-      final response = await request.send();
-      final resBody = await response.stream.bytesToString();
-
-      if (response.statusCode != 200) {
-        throw Exception(
-          "Error updateService: ${response.statusCode}, $resBody",
-        );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return addServicesFromJson(response.body);
+      } else {
+        throw Exception("Gagal upload service: ${response.body}");
       }
     } catch (e) {
-      throw Exception("❌ Error updateService: $e");
+      throw Exception("❌ Error postService: $e");
     }
   }
 
