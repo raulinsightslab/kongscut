@@ -70,21 +70,40 @@ class AuthenticationAPIServices {
   }
 
   //Update
-  static Future updateService({
+  static Future<AddServices?> updateService({
     required int id,
     required String name,
     required String description,
     required int price,
     required String employeeName,
-    required File servicePhoto,
-    required File employeePhoto,
+    File? servicePhoto, // 🔹 jadikan nullable
+    File? employeePhoto, // 🔹 jadikan nullable
   }) async {
     try {
-      final uri = Uri.parse(Endpoint.services);
+      final uri = Uri.parse(
+        "${Endpoint.services}/$id",
+      ); // biasanya endpoint update by ID
       final token = await PreferenceHandler.getToken();
-      // 🔹 convert file ke base64 string
-      String serviceBase64 = base64Encode(await servicePhoto.readAsBytes());
-      String employeeBase64 = base64Encode(await employeePhoto.readAsBytes());
+
+      // 🔹 Buat map request body
+      final Map<String, dynamic> body = {
+        "id": id,
+        "name": name,
+        "description": description,
+        "price": price,
+        "employee_name": employeeName,
+      };
+
+      // 🔹 Kalau ada foto baru, encode ke base64
+      if (servicePhoto != null) {
+        String serviceBase64 = base64Encode(await servicePhoto.readAsBytes());
+        body["service_photo"] = serviceBase64;
+      }
+
+      if (employeePhoto != null) {
+        String employeeBase64 = base64Encode(await employeePhoto.readAsBytes());
+        body["employee_photo"] = employeeBase64;
+      }
 
       final response = await http.put(
         uri,
@@ -93,24 +112,16 @@ class AuthenticationAPIServices {
           "Content-Type": "application/json",
           if (token != null) "Authorization": "Bearer $token",
         },
-        body: json.encode({
-          "id": id,
-          "name": name,
-          "description": description,
-          "price": price,
-          "employee_name": employeeName,
-          "service_photo": serviceBase64, // ✅ string base64
-          "employee_photo": employeeBase64, // ✅ string base64
-        }),
+        body: json.encode(body),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return addServicesFromJson(response.body);
       } else {
-        throw Exception("Gagal upload service: ${response.body}");
+        throw Exception("Gagal update service: ${response.body}");
       }
     } catch (e) {
-      throw Exception("❌ Error postService: $e");
+      throw Exception("❌ Error updateService: $e");
     }
   }
 

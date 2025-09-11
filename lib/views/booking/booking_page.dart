@@ -56,8 +56,8 @@ class _BookingPageState extends State<BookingPage>
             fontSize: 14,
           ),
           tabs: const [
-            Tab(text: "Aktif"),
-            Tab(text: "Riwayat"),
+            Tab(text: "Active"),
+            Tab(text: "Canceled"),
           ],
         ),
       ),

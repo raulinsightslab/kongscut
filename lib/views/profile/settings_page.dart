@@ -53,7 +53,7 @@ class _SettingsPageState extends State<SettingsPage> {
           // Lain-lain
           ListTile(
             leading: const Icon(Icons.admin_panel_settings, color: Colors.red),
-            title: const Text("Masuk sebagai Admin"),
+            title: const Text("Kelola Booking"),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               context.push(AdminBookingPage());
@@ -61,7 +61,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           ListTile(
             leading: const Icon(Icons.admin_panel_settings, color: Colors.red),
-            title: const Text("Masuk sebagai Admin 2"),
+            title: Text("Kelola Services"),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               context.push(AdminServiceListPage());
@@ -69,7 +69,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           ListTile(
             leading: const Icon(Icons.lock, color: Colors.red),
-            title: const Text("Admin Booking"),
+            title: const Text("Privasi & Keamanan"),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               context.push(AdminBookingPage());

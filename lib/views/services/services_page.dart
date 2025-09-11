@@ -26,7 +26,7 @@ class _ServicesPageState extends State<ServicesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white, // putih tulang background
+      backgroundColor: AppColors.offWhite,
       body: Column(
         children: [
           // Header
@@ -43,9 +43,9 @@ class _ServicesPageState extends State<ServicesPage> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 6,
-                      offset: const Offset(0, 3),
+                      color: AppColors.black,
+                      blurRadius: 2,
+                      offset: Offset(0, 1),
                     ),
                   ],
                 ),
@@ -113,12 +113,19 @@ class _ServicesPageState extends State<ServicesPage> {
                 }
 
                 // Ambil 6 terbaru + filter search
-                final servicesList = snapshot.data!.data.reversed
-                    .take(6)
+                final servicesList = snapshot.data!.data
                     .where(
-                      (s) => s.name.toLowerCase().contains(query.toLowerCase()),
+                      (s) =>
+                          s.name.toLowerCase() != "Haircut Segi".toLowerCase(),
                     )
+                    .take(6)
                     .toList();
+                // final servicesList = snapshot.data!.data.reversed
+                //     .take(6)
+                //     .where(
+                //       (s) => s.name.toLowerCase().contains(query.toLowerCase()),
+                //     )
+                //     .toList();
 
                 if (servicesList.isEmpty) {
                   return const Center(child: Text("No matching services"));
@@ -132,11 +139,7 @@ class _ServicesPageState extends State<ServicesPage> {
                     mainAxisSpacing: 15,
                     childAspectRatio: 0.8,
                   ),
-                  padding: const EdgeInsets.only(
-                    bottom: 50,
-                    left: 10,
-                    right: 10,
-                  ),
+                  padding: EdgeInsets.only(bottom: 50, left: 10, right: 10),
                   itemBuilder: (context, index) {
                     final s = servicesList[index];
                     return GestureDetector(

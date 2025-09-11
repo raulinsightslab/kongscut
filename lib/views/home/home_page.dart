@@ -20,6 +20,7 @@ class _DashboardPageState extends State<DashboardPage> {
   final int _currentIndex = 0; // boleh diubah nanti
   late Future<GetServices> futureService;
   late Future<GetUserModel>? futureUser;
+  String query = "";
 
   int activeIndex = 0;
   final controller = CarouselController();

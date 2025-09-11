@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:barber/data/api/service_api.dart';
@@ -117,12 +116,8 @@ class _AdminServiceFormPageState extends State<AdminServiceFormPage> {
       } else {
         // Update service
         // Hanya kirim foto yang diubah
-        File servicePhotoFile = _servicePhotoChanged
-            ? _servicePhoto!
-            : File.fromRawPath(utf8.encode('')); // kosongkan jika tidak diubah
-        File employeePhotoFile = _employeePhotoChanged
-            ? _employeePhoto!
-            : File.fromRawPath(utf8.encode(''));
+        File? servicePhotoFile = _servicePhotoChanged ? _servicePhoto : null;
+        File? employeePhotoFile = _employeePhotoChanged ? _employeePhoto : null;
 
         await AuthenticationAPIServices.updateService(
           id: widget.service!.id,

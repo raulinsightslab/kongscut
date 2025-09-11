@@ -50,7 +50,6 @@ class AuthenticationAPI {
   // Ambil profile user
   static Future<GetUserModel> getProfile() async {
     final url = Uri.parse(Endpoint.profile);
-
     // Ambil token dari SharedPreferences
     final token = await PreferenceHandler.getToken();
 
@@ -64,6 +63,33 @@ class AuthenticationAPI {
     } else {
       final error = json.decode(response.body);
       throw Exception(error["message"] ?? "Failed to load profile");
+    }
+  }
+
+  static Future<GetUserModel> updateUser({
+    required String name,
+    required String email,
+    String? password, // opsional
+  }) async {
+    final url = Uri.parse(Endpoint.profile);
+    final token = await PreferenceHandler.getToken();
+
+    final body = {"name": name, "email": email};
+    if (password != null && password.isNotEmpty) {
+      body["password"] = password;
+    }
+
+    final response = await http.put(
+      url,
+      headers: {"Accept": "application/json", "Authorization": "Bearer $token"},
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      return GetUserModel.fromJson(json.decode(response.body));
+    } else {
+      final error = json.decode(response.body);
+      throw Exception(error["message"] ?? "Update profile gagal");
     }
   }
 }
